@@ -38,6 +38,15 @@ print(f"Modele charge : {list(model.classes_)}")
 
 # --- Routes ---
 @app.get("/health")
+@app.get("/model-info")
+def model_info():
+    """Informations sur le modèle chargé."""
+    return {
+        "type": type(model).__name__,
+        "n_estimators": model.n_estimators,
+        "classes": list(model.classes_),
+        "n_features": model.n_features_in_
+    }
 def health_check():
     return {"status": "ok", "message": "SenSante API is running"}
 
