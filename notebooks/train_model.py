@@ -185,3 +185,44 @@ print(f"\n{'=' * 50}")
 print("Entrainement termine !")
 print("Prochain lab : creer une API avec Flask")
 print(f"{'=' * 50}")
+
+# ===== EXERCICE 1 : IMPORTANCE DES FEATURES =====
+importances = model.feature_importances_
+print("\n--- Importance des features ---")
+for name, imp in sorted(zip(feature_cols, importances),
+                        key=lambda x: x[1], reverse=True):
+    print(f"  {name:20s} : {imp:.3f}")
+
+    # ===== EXERCICE 2 : TESTER AVEC 3 PATIENTS FICTIFS =====
+patients_fictifs = [
+    {
+        'nom': 'Jeune sans symptomes (20 ans)',
+        'age': 20, 'sexe': 'M', 'temperature': 37.0,
+        'tension_sys': 120, 'toux': 0, 'fatigue': 0,
+        'maux_tete': 0, 'region': 'Dakar'
+    },
+    {
+        'nom': 'Adulte forte fievre (35 ans)',
+        'age': 35, 'sexe': 'F', 'temperature': 40.2,
+        'tension_sys': 110, 'toux': 1, 'fatigue': 1,
+        'maux_tete': 1, 'region': 'Dakar'
+    },
+    {
+        'nom': 'Patient age avec toux (65 ans)',
+        'age': 65, 'sexe': 'M', 'temperature': 38.1,
+        'tension_sys': 145, 'toux': 1, 'fatigue': 1,
+        'maux_tete': 0, 'region': 'Dakar'
+    }
+]
+
+print("\n--- Exercice 2 : Test avec 3 patients fictifs ---")
+for p in patients_fictifs:
+    sexe_enc = le_sexe_loaded.transform([p['sexe']])[0]
+    region_enc = le_region_loaded.transform([p['region']])[0]
+    features = [p['age'], sexe_enc, p['temperature'],
+                p['tension_sys'], p['toux'], p['fatigue'],
+                p['maux_tete'], region_enc]
+    diagnostic = model_loaded.predict([features])[0]
+    proba = model_loaded.predict_proba([features])[0].max()
+    print(f"\n  {p['nom']}")
+    print(f"  => Diagnostic : {diagnostic} ({proba:.1%})")
