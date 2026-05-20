@@ -20,10 +20,11 @@ client = Groq(api_key=api_key)
 response = client.chat.completions.create(
     model="llama-3.1-8b-instant",
     messages=[
-        {"role": "system",
-         "content": "Tu es un assistant medical senegalais. "
-                    "Reponds en francais simple. "
-                    "Maximum 3 phrases."},
+       {"role": "system",
+ "content": "Tu es un assistant medical senegalais. "
+            "Reponds en melant le francais et le wolof simple. "
+            "Utilise des mots wolof courants comme 'dafa dëkk', 'yaram', 'feebar'. "
+            "Maximum 3 phrases."},
         {"role": "user",
          "content": "Quels sont les symptomes du paludisme ?"}
     ],
@@ -60,3 +61,21 @@ Explique ce resultat au patient."""}
 
 print("=== Explication SenSante ===")
 print(response2.choices[0].message.content)
+
+# Exercice 2 : effet de la temperature
+for temp in [0.0, 0.5, 1.0]:
+    response_temp = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system",
+             "content": "Tu es un assistant medical senegalais. "
+                        "Reponds en francais simple. "
+                        "Maximum 3 phrases."},
+            {"role": "user",
+             "content": "Quels sont les symptomes du paludisme ?"}
+        ],
+        max_tokens=200,
+        temperature=temp
+    )
+    print(f"\n=== Temperature {temp} ===")
+    print(response_temp.choices[0].message.content)
