@@ -1,6 +1,8 @@
 # api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 import joblib
 import numpy as np
@@ -76,7 +78,7 @@ le_region = joblib.load("models/encoder_region.pkl")
 feature_cols = joblib.load("models/feature_cols.pkl")
 print(f"Modele charge : {list(model.classes_)}")
 
-# --- Routes ---
+# --- Routes API ---
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "SenSante API is running"}
@@ -177,3 +179,11 @@ def explain(data: ExplainInput):
         explication = f"Erreur lors de l'appel au LLM : {str(e)}"
 
     return ExplainOutput(explication=explication)
+
+# --- Servir le frontend (fichiers statiques) ---
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+def serve_frontend():
+    """Servir la page d'accueil."""
+    return FileResponse("frontend/index.html")
